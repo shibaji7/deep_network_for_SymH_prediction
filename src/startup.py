@@ -14,7 +14,8 @@ __status__ = "Research"
 
 import os
 
-BASE_LOCATION = "/home/shibaji7/DATA/"
+PROJECT_NAME = "deep_network_for_SymH_prediction"
+BASE_LOCATION = os.environ["HOME"]  + "/%s/DATA/"%PROJECT_NAME
 
 ##############################################################################################
 ## Initialize the folder systems
