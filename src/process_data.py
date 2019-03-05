@@ -15,12 +15,14 @@ import pandas as pd
 import glob
 import datetime as dt
 
+from startup import *
+
 ######################################################################################################
 ## This function reads all the files from omni raw database and convert to .hdf5 files
 ######################################################################################################
 def raw_omni_to_hdf5():
-    files = glob.glob("/home/shibaji7/DATA/omni/raw/*.asc")
-    hdf5_base = "/home/shibaji7/DATA/omni/hdf5/%s.h5"
+    files = glob.glob( BASE_LOCATION + "omni/raw/*.asc" )
+    hdf5_base = BASE_LOCATION + "omni/hdf5/%s.h5"
     header = ["DATE","ID_IMF","ID_SW","nIMF","nSW","POINT_RATIO","TIME_SHIFT(sec)","RMS_TIME_SHIFT","RMS_PF_NORMAL",
                 "TIME_BTW_OBS","Bfa","Bx","By_GSE","Bz_GSE","By_GSM","Bz_GSM","B_RMS","Bfa_RMS","V","Vx_GSE","Vy_GSE",
                 "Vz_GSE","n","T","P_DYN","E","BETA","MACH_A","X_GSE","Y_GSE","Z_GSE","BSN_Xgse","BSN_Ygse","BSN_Zgse",
@@ -51,8 +53,8 @@ def raw_omni_to_hdf5():
 ## This function reads all the files from symh raw database and convert to .hdf5 files
 ######################################################################################################
 def raw_symh_to_hdf5():
-    files = glob.glob("/home/shibaji7/DATA/geomag/symh/raw/*.asc")
-    hdf5_base = "/home/shibaji7/DATA/geomag/symh/hdf5/%s.h5"
+    files = glob.glob( BASE_LOCATION + "geomag/symh/raw/*.asc" )
+    hdf5_base = BASE_LOCATION + "geomag/symh/hdf5/%s.h5"
     for fname in files:
         hdf5_fname = hdf5_base%(fname.split("/")[-1].replace(".asc",""))
         print fname, "-to-", hdf5_fname

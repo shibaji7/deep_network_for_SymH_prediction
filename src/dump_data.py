@@ -11,19 +11,20 @@ __maintainer__ = "Chakraborty, S."
 __email__ = "shibaji7@vt.edu"
 __status__ = "Research"
 
-
 import os
 import urllib2
 import numpy as np
 import datetime as dt
 from calendar import monthrange
 
+from statup import *
+
 ##############################################################################################
 ## Download 1m resolution solar wind omni data from NASA GSFC ftp server
 ##############################################################################################
 def download_omni_dataset():
     base_uri = "ftp://spdf.gsfc.nasa.gov/pub/data/omni/high_res_omni/monthly_1min/omni_min%d%02d.asc"
-    base_storage = "/home/shibaji7/DATA/omni/raw/%d%02d.asc"
+    base_storage = BASE_LOCATION + "omni/raw/%d%02d.asc"
     for year in range(1995,2019):
         for month in range(1,13):
             url = base_uri%(year,month)
@@ -42,7 +43,7 @@ def download_omni_dataset():
 ##############################################################################################
 def download_symH_dataset():
     base_uri = "http://wdc.kugi.kyoto-u.ac.jp/cgi-bin/aeasy-cgi?Tens=%s&Year=%s&Month=%s&Day_Tens=0&Days=1&Hour=00&min=00&Dur_Day_Tens=%s&Dur_Day=%s&Dur_Hour=00&Dur_Min=00&Image+Type=GIF&COLOR=COLOR&AE+Sensitivity=0&ASY/SYM++Sensitivity=0&Output=ASY&Out+format=IAGA2002&Email=shibaji7@vt.edu"
-    base_storage = "/home/shibaji7/DATA/geomag/symh/raw/%d%02d.asc"
+    base_storage = BASE_LOCATION + "geomag/symh/raw/%d%02d.asc"
     for year in range(1995, 2019):
         for month in range(1,13):
             ytens = str(int(year/10))
