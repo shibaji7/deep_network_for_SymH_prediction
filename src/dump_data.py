@@ -3,7 +3,7 @@
 """dump_data.py: dump data downloads all the ascii type files from different FTP repositories."""
 
 __author__ = "Chakraborty, S."
-__copyright__ = "Copyright 2019, Space @ VT"
+__copyright__ = "Copyright 2019, Space@VT"
 __credits__ = []
 __license__ = "MIT"
 __version__ = "1.0."
@@ -17,7 +17,7 @@ import numpy as np
 import datetime as dt
 from calendar import monthrange
 
-from statup import *
+from startup import *
 
 ##############################################################################################
 ## Download 1m resolution solar wind omni data from NASA GSFC ftp server
