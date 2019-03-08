@@ -79,7 +79,6 @@ def scatter_plot_symh_ut_gmst(years=[], values="SYM-H"):
 
         fig.savefig("%s/%s_%d.png"%(dirc, values, year),bbox_inches='tight')
         plt.close()
-        break
         pass
     return
  
