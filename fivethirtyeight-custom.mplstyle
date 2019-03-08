@@ -1,4 +1,4 @@
-#Author: Cameron Davidson-Pilon, replicated styles from FiveThirtyEight.com
+#Author: Shibaji Chakraborty, replicated styles from FiveThirtyEight.com
 # See https://www.dataorigami.net/blogs/fivethirtyeight-mpl
 
 lines.linewidth: 4
