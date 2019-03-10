@@ -40,4 +40,12 @@ def ini():
     try:
         os.mkdir( BASE_LOCATION + "premodel_da_figures/" )
     except: print "System exception. Check folder: %s"%(BASE_LOCATION + "premodel_da_figures/")
+
+    try:
+        os.makedirs( BASE_LOCATION + "geomag/Kp/raw/" )
+    except: print "System exception. Check folder: %s"%(BASE_LOCATION + "geomag/Kp/raw/")
+    
+    try:
+        os.mkdir( BASE_LOCATION + "geomag/Kp/hdf5/" )
+    except: print "System exception. Check folder: %s"%(BASE_LOCATION + "geomag/Kp/hdf5/")
     return

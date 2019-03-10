@@ -13,6 +13,7 @@ __status__ = "Research"
 
 import os
 import urllib2
+import requests
 import numpy as np
 import datetime as dt
 from calendar import monthrange
@@ -59,7 +60,15 @@ def download_symH_dataset():
             pass
         pass
     return
+
+##############################################################################################
+## Download 1m resolution Kp data from WDC Kyoto ftp server
+##############################################################################################
+def download_Kp_dataset():
+    cmd = "curl -o \"/home/shibaji7/DATA/geomag/Kp/raw/Kp.asc\" --data \"SCent=19&STens=9&SYear=5&From=1&ECent=20&ETens=1&EYear=8&To=12&Email=shibaji7%40vt.edu\" http://wdc.kugi.kyoto-u.ac.jp/cgi-bin/kp-cgi"
+    os.system(cmd)
+    return
  
 if __name__ == "__main__":
-    download_symH_dataset()
+    download_Kp_dataset()
     pass

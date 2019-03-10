@@ -76,7 +76,28 @@ def raw_symh_to_hdf5():
         pass
     return
 
+######################################################################################################
+## This function reads all the files from Kp raw database and convert to .hdf5 files
+######################################################################################################
+def raw_Kp_to_hdf5():
+    fname = BASE_LOCATION + "geomag/Kp/raw/Kp.asc"
+    hdf5_fname = BASE_LOCATION + "geomag/Kp/hdf5/Kp.h5"
+    with open(fname, "r") as f: lines = f.readlines()
+    linevalues = []
+    for line in lines[3:-1]:
+        values = filter(None,line.replace("\n",""))[0:25]
+        date = dt.datetime.strptime(values[0:8],"%Y%m%d")
+        for i in range(8):
+            I = 9 + 2*i
+            print date + dt.timedelta(hours=3*i), values[I:I+2]
+            linevalues.append([date + dt.timedelta(hours=3*i), values[I:I+2].replace(" ","")])
+            pass
+        pass
+    header = ["DATE","Kp"]
+    _o = pd.DataFrame(linevalues, columns=header)
+    _o.to_hdf(hdf5_fname, mode="w", key="df")
+    return
 
 if __name__ == "__main__":
-    raw_omni_to_hdf5()
+    raw_Kp_to_hdf5()
     pass
