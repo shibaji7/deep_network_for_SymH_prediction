@@ -56,10 +56,10 @@ def scatter_plot_symh_ut(years=[], values="SYM-H"):
         xxTime, yyTime = np.meshgrid(xTime, yTime, sparse=False, indexing="ij")
         X = P.values.T
         
-        fig, ax = plt.subplots(figsize=(7,3),nrows=1,ncols=1,dpi=100)
+        fig, ax = plt.subplots(figsize=(7,3),nrows=1,ncols=1,dpi=120)
         fig.subplots_adjust(hspace=0.2,wspace=0.1)
         
-        cmap = matplotlib.cm.get_cmap("jet")
+        cmap = matplotlib.cm.get_cmap("BrBG")
         cmap.set_bad(color="k",alpha=1.)
         ax.xaxis.set_major_formatter(fmt)
         cax = ax.pcolormesh(xxTime, yyTime, X, cmap=cmap,vmax=50,vmin=-50)
@@ -94,11 +94,14 @@ def scatter_plot_symh_ut(years=[], values="SYM-H"):
 ##                         "BSN_Xgse", "BSN_Ygse", "BSN_Zgse", "AE", "AL", "AU", "SYM-D", "SYM-H", 
 ##                         "ASY-D", "ASY-H", "PC-N", "MACH_M"
 #############################################################################################################
-def scatter_plot_sw_ut(years=[], values="Bx"):
+def scatter_plot_sw_ut(years=[], values="V"):
+    nan_directory = {"Bx":9999.99, "By_GSE":9999.99, "Bz_GSE":9999.99, "By_GSM":9999.99, "Bz_GSM":9999.99, "V":99999.9,
+                        "Vx_GSE":99999.9, "Vy_GSE":99999.9, "Vz_GSE":99999.9, "n":999.99, "T":9999999., "P_DYN":99.99,
+                        "E":999.99, "BETA":999.99, "MACH_A":999.9}
     dirc = BASE_LOCATION + "premodel_da_figures"
     if len(years) == 0: years = range(1995,2019)
     fmt = matplotlib.dates.DateFormatter("%b")
-    hdf5_base = BASE_LOCATION + "geomag/symh/hdf5/%d*.h5"
+    hdf5_base = BASE_LOCATION + "omni/hdf5/%d*.h5"
     for year in years:
         flist = glob.glob(hdf5_base%year)
         O = pd.DataFrame()
@@ -113,12 +116,15 @@ def scatter_plot_sw_ut(years=[], values="Bx"):
         xTime = P.columns.tolist()
         yTime = P.index.tolist()
         xxTime, yyTime = np.meshgrid(xTime, yTime, sparse=False, indexing="ij")
-        X = P.values.T
+        X = P.copy(True).values.T
+        ## Convert bad values to NaNs
+        print "Max,min range convert -to- NaN : %f,%f"%(np.max(X),np.min(X))
+        X[X==nan_directory[values]] = np.nan
         
-        fig, ax = plt.subplots(figsize=(7,3),nrows=1,ncols=1,dpi=100)
+        fig, ax = plt.subplots(figsize=(7,3),nrows=1,ncols=1,dpi=120)
         fig.subplots_adjust(hspace=0.2,wspace=0.1)
         
-        cmap = matplotlib.cm.get_cmap("jet")
+        cmap = matplotlib.cm.get_cmap("BrBG")
         cmap.set_bad(color="k",alpha=1.)
         ax.xaxis.set_major_formatter(fmt)
         cax = ax.pcolormesh(xxTime, yyTime, X, cmap=cmap,vmax=50,vmin=-50)
@@ -132,9 +138,13 @@ def scatter_plot_sw_ut(years=[], values="Bx"):
         cbar.ax.set_yticklabels(["< -50", "0", "> 50"])
         cbar.ax.set_title("Sym-H",fontdict=fontdict)
         fontdict["size"] = 8
-        ax.text(1.15,0.95,r"$Sym-H_{max}=%.2f$"%np.max(X)+"\n"+r"$Sym-H_{min}=%.2f$"%np.min(X),horizontalalignment="center",
-                    verticalalignment="center", transform=ax.transAxes,
-                    fontdict=fontdict)
+        ## Convert bad values to 0s
+        X = P.copy(True).values.T
+        X[X==nan_directory[values]] = 0.
+        print "Max,min range convert : %f,%f"%(np.max(X[np.nonzero(X)]),np.min(X[np.nonzero(X)]))
+        ax.text(1.15,0.95,r"$Sym-H_{max}=%.2f$"%np.max(X[np.nonzero(X)])+"\n"+r"$Sym-H_{min}=%.2f$"%np.min(X[np.nonzero(X)]),
+                horizontalalignment="center", verticalalignment="center", transform=ax.transAxes,
+                fontdict=fontdict)
         fname = "%s/%s_%d.png"%(dirc, values, year)
         print "Save -to- %s"%fname
         fig.savefig(fname,bbox_inches="tight")
@@ -144,5 +154,8 @@ def scatter_plot_sw_ut(years=[], values="Bx"):
 
  
 if __name__ == "__main__":
-    scatter_plot_symh_ut()
+    params = ["Bx", "By_GSE", "Bz_GSE", "By_GSM", "Bz_GSM", "V", "Vx_GSE", "Vy_GSE", "Vz_GSE", "n", "T", "P_DYN", "E", "BETA", "MACH_A"]
+    for param in params:
+        scatter_plot_sw_ut(years=[], values=param)
+        pass
     pass
