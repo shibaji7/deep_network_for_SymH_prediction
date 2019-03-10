@@ -136,13 +136,14 @@ def scatter_plot_sw_ut(years=[], values="V"):
         ax.set_yticklabels(np.arange(0,24,3),fontdict=fontdict)
         cbar = fig.colorbar(cax, ax=ax,shrink=.5,ticks=[-50,0,50])
         cbar.ax.set_yticklabels(["< -50", "0", "> 50"])
-        cbar.ax.set_title("Sym-H",fontdict=fontdict)
+        cbar.ax.set_title(values,fontdict=fontdict)
         fontdict["size"] = 8
         ## Convert bad values to 0s
         X = P.copy(True).values.T
         X[X==nan_directory[values]] = 0.
         print "Max,min range convert : %f,%f"%(np.max(X[np.nonzero(X)]),np.min(X[np.nonzero(X)]))
-        ax.text(1.15,0.95,r"$Sym-H_{max}=%.2f$"%np.max(X[np.nonzero(X)])+"\n"+r"$Sym-H_{min}=%.2f$"%np.min(X[np.nonzero(X)]),
+        ax.text(1.15,0.95,r"$%s_{max}=%.2f$"%(values.replace("_","\_"),np.max(X[np.nonzero(X)]))+\
+                    "\n"+r"$%s_{min}=%.2f$"%(values.replace("_","\_"),np.min(X[np.nonzero(X)])),
                 horizontalalignment="center", verticalalignment="center", transform=ax.transAxes,
                 fontdict=fontdict)
         fname = "%s/%s_%d.png"%(dirc, values, year)
