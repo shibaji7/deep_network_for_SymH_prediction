@@ -3,6 +3,10 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Job error and out files
+*.e*
+*.o*
+
 # C extensions
 *.so
 
