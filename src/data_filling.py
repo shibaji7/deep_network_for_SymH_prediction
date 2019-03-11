@@ -11,6 +11,7 @@ __maintainer__ = "Chakraborty, S."
 __email__ = "shibaji7@vt.edu"
 __status__ = "Research"
 
+import os
 import numpy as np
 import pandas as pd
 import datetime as dt
@@ -66,36 +67,39 @@ def interpolate_sw_params(years=[], values="Bx"):
     hdf5_yearly_intp_base = BASE_LOCATION + "omni/hdf5/intp/%d_%s.h5"
     Kp = to_linear_downsampled_Kp()
     for year in years:
-        print "Processing SW parameter '%s' for year : %d"%(values, year)
-        kp = Kp[(Kp.DATE >= dt.datetime(year,1,1)) & (Kp.DATE < dt.datetime(year+1,1,1))]
-        flist = glob.glob(hdf5_base%year)
-        O = pd.DataFrame()
-        for fname in flist:
-            _o = pd.read_hdf(fname, mode="r", key="df", parse_dates=True)
-            O = pd.concat([O, _o])
-            pass
-        O = O.sort_values("DATE")
-        O = O[["DATE",values]]
-        O["UT"] = O.DATE.apply(lambda x: x.hour)
-        
-        ## Convert bad values to NaNs
-        O = O.replace(nan_directory[values],np.nan)
-        jO = O.copy(True).join(kp, how="inner", lsuffix="kp")
-        _O = jO.dropna()
-        print "After dropping NaN vlues, -to- %d,%d"%(len(O),len(_O))
-        
-        ## Bin dataset based on UT and Kp
-        _gr = _O.groupby(["UT","Kp"]).agg({values:["median","std"]})
-
-        ## Interpolate NaN values
-        jO = dd.from_pandas(jO, npartitions=100)
-        r_values = jO.apply(intp, axis=1, args=(_gr,)).compute(scheduler="threads")
-        cnv = O[values].isna().sum()
-        print "Converted NaNs - %d",cnv
-        O[values] = np.array(r_values).tolist()
         fname = hdf5_yearly_intp_base%(year,values)
-        print "Save -to- %s"%fname
-        O.to_hdf(fname, mode="w", key="df") 
+        if not os.path.exists(fname):
+            print "Processing SW parameter '%s' for year : %d"%(values, year)
+            kp = Kp[(Kp.DATE >= dt.datetime(year,1,1)) & (Kp.DATE < dt.datetime(year+1,1,1))]
+            flist = glob.glob(hdf5_base%year)
+            O = pd.DataFrame()
+            for fname in flist:
+                _o = pd.read_hdf(fname, mode="r", key="df", parse_dates=True)
+                O = pd.concat([O, _o])
+                pass
+            O = O.sort_values("DATE")
+            O = O[["DATE",values]]
+            O["UT"] = O.DATE.apply(lambda x: x.hour)
+            
+            ## Convert bad values to NaNs
+            O = O.replace(nan_directory[values],np.nan)
+            jO = O.copy(True).join(kp, how="inner", lsuffix="kp")
+            _O = jO.dropna()
+            print "After dropping NaN vlues, -to- %d,%d"%(len(O),len(_O))
+            
+            ## Bin dataset based on UT and Kp
+            _gr = _O.groupby(["UT","Kp"]).agg({values:["median","std"]})
+    
+            ## Interpolate NaN values
+            jO = dd.from_pandas(jO, npartitions=100)
+            r_values = jO.apply(intp, axis=1, args=(_gr,)).compute(scheduler="threads")
+            cnv = O[values].isna().sum()
+            print "Converted NaNs - ",cnv
+            O[values] = np.array(r_values).tolist()
+            fname = hdf5_yearly_intp_base%(year,values)
+            print "Save -to- %s"%fname
+            O.to_hdf(fname, mode="w", key="df") 
+            pass
         pass
     return
 
