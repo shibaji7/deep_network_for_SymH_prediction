@@ -48,4 +48,13 @@ def ini():
     try:
         os.mkdir( BASE_LOCATION + "geomag/Kp/hdf5/" )
     except: print "System exception. Check folder: %s"%(BASE_LOCATION + "geomag/Kp/hdf5/")
+
+    try:
+        os.mkdir( BASE_LOCATION + "omni/hdf5/intp/" )
+    except: print "System exception. Check folder: %s"%(BASE_LOCATION + "omni/hdf5/intp/")
     return
+
+
+if __name__ == "__main__":
+    ini()
+    pass

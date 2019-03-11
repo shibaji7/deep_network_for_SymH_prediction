@@ -34,7 +34,7 @@ def raw_omni_to_hdf5():
         linevalues = []
         for i, line in enumerate(lines):
             values = filter(None, line.replace("\n", "").split(" "))
-            timestamp = dt.datetime(int(values[0]),1,1,int(values[2]),int(values[3])) + dt.timedelta(days=int(values[1]))
+            timestamp = dt.datetime(int(values[0]),1,1,int(values[2]),int(values[3])) + dt.timedelta(days=int(values[1])-1)
             linevalues.append([timestamp,int(values[4]),int(values[5]),int(values[6]),int(values[7]),int(values[8]),int(values[9]),
                     int(values[10]),float(values[11]),int(values[12]),float(values[13]),float(values[14]),float(values[15]),float(values[16]),
                     float(values[17]),float(values[18]),float(values[19]),float(values[20]),float(values[21]),float(values[22]),float(values[23]),
@@ -99,5 +99,5 @@ def raw_Kp_to_hdf5():
     return
 
 if __name__ == "__main__":
-    raw_Kp_to_hdf5()
+    raw_omni_to_hdf5()
     pass
