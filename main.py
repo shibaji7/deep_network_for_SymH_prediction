@@ -12,8 +12,10 @@ __email__ = "shibaji7@vt.edu"
 __status__ = "Research"
 
 
-import os
+import subprocess
 
 if __name__ == "__main__":
-    os.system("python src/data_filling.py")
+    print "Started main loop..."
+    subprocess.call(["python", "src/data_filling.py"])
+    print "End main loop."
     pass

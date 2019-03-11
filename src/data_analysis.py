@@ -153,7 +153,7 @@ def scatter_plot_sw_ut(years=[], values="V"):
         pass
     return
 
- 
+
 if __name__ == "__main__":
     params = ["Bx", "By_GSE", "Bz_GSE", "By_GSM", "Bz_GSM", "V", "Vx_GSE", "Vy_GSE", "Vz_GSE", "n", "T", "P_DYN", "E", "BETA", "MACH_A"]
     for param in params:

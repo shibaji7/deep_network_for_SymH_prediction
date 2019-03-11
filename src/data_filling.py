@@ -70,7 +70,7 @@ def interpolate_sw_params(years=[], values="Bx"):
         fname = hdf5_yearly_intp_base%(year,values)
         if not os.path.exists(fname):
             print "Processing SW parameter '%s' for year : %d"%(values, year)
-            kp = Kp[(Kp.DATE >= dt.datetime(year,1,1)) & (Kp.DATE < dt.datetime(year+1,1,1))]
+            kp = Kp[(Kp.DATE >= dt.datetime(year,1,1)) & (Kp.DATE < dt.datetime(year+1,1,1))].reset_index()
             flist = glob.glob(hdf5_base%year)
             O = pd.DataFrame()
             for fname in flist:
@@ -103,11 +103,10 @@ def interpolate_sw_params(years=[], values="Bx"):
         pass
     return
 
- 
 if __name__ == "__main__":
     params = ["Bx", "By_GSE", "Bz_GSE", "By_GSM", "Bz_GSM", "V", "Vx_GSE", "Vy_GSE", "Vz_GSE", "n", "T", "P_DYN", "E", "BETA", "MACH_A"]
     params = ["Bx"]
     for param in params:
-        interpolate_sw_params(years=[1995], values=param)
+        interpolate_sw_params(years=[], values=param)
         pass
     pass
