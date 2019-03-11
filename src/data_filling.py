@@ -15,6 +15,7 @@ import numpy as np
 import pandas as pd
 import datetime as dt
 import glob
+import dask.dataframe as dd
 
 np.random.seed(0)
 
@@ -48,6 +49,15 @@ def to_linear_downsampled_Kp():
 ##                         "Vz_GSE", "n", "T", "P_DYN", "E", "BETA", "MACH_A"
 #############################################################################################################
 def interpolate_sw_params(years=[], values="Bx"):
+
+    def intp(x, _gr):
+        v = x[values]
+        if np.isnan(v):
+            o = _gr[(_gr.index.get_level_values("UT") == x["UT"]) & (_gr.index.get_level_values("Kp") == x["Kp"])][values]
+            v = np.random.normal(o["median"],o["std"])[0]
+            pass
+        return v
+
     nan_directory = {"Bx":9999.99, "By_GSE":9999.99, "Bz_GSE":9999.99, "By_GSM":9999.99, "Bz_GSM":9999.99, "V":99999.9,
                         "Vx_GSE":99999.9, "Vy_GSE":99999.9, "Vz_GSE":99999.9, "n":999.99, "T":9999999., "P_DYN":99.99,
                         "E":999.99, "BETA":999.99, "MACH_A":999.9}
@@ -70,29 +80,22 @@ def interpolate_sw_params(years=[], values="Bx"):
         
         ## Convert bad values to NaNs
         O = O.replace(nan_directory[values],np.nan)
-        _O = O.copy(True).join(kp, how="inner", lsuffix="kp").dropna()
+        jO = O.copy(True).join(kp, how="inner", lsuffix="kp")
+        _O = jO.dropna()
         print "After dropping NaN vlues, -to- %d,%d"%(len(O),len(_O))
         
         ## Bin dataset based on UT and Kp
         _gr = _O.groupby(["UT","Kp"]).agg({values:["median","std"]})
 
         ## Interpolate NaN values
-        r_values = []
-        print O.head()
-        for i, row in O.iterrows():
-            if np.isnan(row[values]):
-                o = _gr[(_gr.index.get_level_values("UT") == row["UT"]) & (_gr.index.get_level_values("Kp") == row["Kp"])][values]
-                v = np.random.normal(o["median"],o["std"])[0]
-                print "None",row["DATE"]
-                r_values.append(v)
-            else:
-                print row["DATE"]
-                r_values.append(row[values])
-                pass
-        O[values] = r_values
-        print O.head()
+        jO = dd.from_pandas(jO, npartitions=100)
+        r_values = jO.apply(intp, axis=1, args=(_gr,)).compute(scheduler="threads")
+        cnv = O[values].isna().sum()
+        print "Converted NaNs - %d",cnv
+        O[values] = np.array(r_values).tolist()
         fname = hdf5_yearly_intp_base%(year,values)
         print "Save -to- %s"%fname
+        O.to_hdf(fname, mode="w", key="df") 
         pass
     return
 
