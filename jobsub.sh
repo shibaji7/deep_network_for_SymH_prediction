@@ -1,6 +1,7 @@
 #!/bin/bash
-#PBS -l nodes=1:ppn=8
-#PBS -l walltime=20:00:00
+#PBS -l nodes=1:ppn=10
+#PBS -l walltime=10:00:00
+#PBS -l procs=120
 #PBS -q normal_q
 #PBS -A solarflare
 #PBS -W group_list=newriver

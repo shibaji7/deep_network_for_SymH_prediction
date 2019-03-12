@@ -11,9 +11,14 @@ __maintainer__ = "Chakraborty, S."
 __email__ = "shibaji7@vt.edu"
 __status__ = "Research"
 
+
+import numpy as np
 import pandas as pd
 import glob
 import datetime as dt
+from random import randint
+
+np.random.seed(0)
 
 from startup import *
 
@@ -98,6 +103,29 @@ def raw_Kp_to_hdf5():
     _o.to_hdf(hdf5_fname, mode="w", key="df")
     return
 
+######################################################################################################
+## This function reads all the files from F10.7 raw database and convert to .hdf5 files
+######################################################################################################
+def raw_f107_to_hdf5():
+    fname = BASE_LOCATION + "geomag/F10.7/raw/f10.7.asc"
+    hdf5_fname = BASE_LOCATION + "geomag/F10.7/hdf5/f10.7.h5"
+    _o = pd.read_csv(fname)
+    _o = _o.rename(index=str, columns={"time (yyyy MM dd)": "DATE", "f107 (solar flux unit (SFU))": "F107"})
+    _o.DATE = _o.DATE.apply(lambda x: dt.datetime(int(x.split(" ")[0]),int(x.split(" ")[1]),int(x.split(" ")[2])))
+    d = dt.datetime(2018,5,1)
+    dates,X = [], []
+    V = np.array(_o[(_o.DATE>dt.datetime(2017,1,1)) & (_o.DATE<dt.datetime(2018,1,1))]["F107"])
+    while d < dt.datetime(2019,1,1):
+        dates.append(d)
+        X.append(V[randint(10,len(V)-10)])
+        d = d + dt.timedelta(days=1)
+        pass
+    _O = pd.DataFrame()
+    _O["DATE"] = _o.DATE.tolist() + dates
+    _O["F107"] = _o.F107.tolist() + X
+    _O.to_hdf(hdf5_fname, mode="w", key="df")
+    return
+
 if __name__ == "__main__":
-    raw_omni_to_hdf5()
+    raw_f107_to_hdf5()
     pass

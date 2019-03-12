@@ -52,6 +52,14 @@ def ini():
     try:
         os.mkdir( BASE_LOCATION + "omni/hdf5/intp/" )
     except: print "System exception. Check folder: %s"%(BASE_LOCATION + "omni/hdf5/intp/")
+
+    try:
+        os.makedirs( BASE_LOCATION + "geomag/F10.7/raw/" )
+    except: print "System exception. Check folder: %s"%(BASE_LOCATION + "geomag/F10.7/raw/")
+
+    try:
+        os.mkdir( BASE_LOCATION + "geomag/F10.7/hdf5/" )
+    except: print "System exception. Check folder: %s"%(BASE_LOCATION + "geomag/F10.5/hdf5/")
     return
 
 
