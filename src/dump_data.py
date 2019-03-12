@@ -65,7 +65,7 @@ def download_symH_dataset():
 ## Download 3h resolution Kp data from WDC Kyoto ftp server
 ##############################################################################################
 def download_Kp_dataset():
-    cmd = "curl -o \"/home/shibaji7/DATA/geomag/Kp/raw/Kp.asc\" --data \"SCent=19&STens=9&SYear=5&From=1&ECent=20&ETens=1&EYear=8&To=12&Email=shibaji7%40vt.edu\" http://wdc.kugi.kyoto-u.ac.jp/cgi-bin/kp-cgi"
+    cmd = "curl -o \"/home/shibaji7/DATA/geomag/Kp/raw/Kp.asc\" --data \"SCent=19&STens=9&SYear=5&From=1&ECent=20&ETens=1&EYear=9&To=1&Email=shibaji7%40vt.edu\" http://wdc.kugi.kyoto-u.ac.jp/cgi-bin/kp-cgi"
     os.system(cmd)
     return
 
@@ -73,11 +73,12 @@ def download_Kp_dataset():
 ## Download 1D resolution F10.7 data from Colorado LASP server
 ##############################################################################################
 def download_F107_dataset():
-    cmd = "wget -O " + BASE_LOCATION + "geomag/F10.7/raw/f10.7.asc 'http://lasp.colorado.edu/lisird/latis/noaa_radio_flux.csv?time>=1995-01-01&time<2019-01-01'"
+    cmd = "wget -O " + BASE_LOCATION + "geomag/F10.7/raw/f10.7.asc 'http://lasp.colorado.edu/lisird/latis/noaa_radio_flux.csv?time>=1995-01-01&time<2019-01-02'"
     os.system(cmd)
     return
 
  
 if __name__ == "__main__":
     download_F107_dataset()
+    download_Kp_dataset()
     pass

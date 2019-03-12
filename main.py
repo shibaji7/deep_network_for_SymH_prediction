@@ -16,6 +16,6 @@ import subprocess
 
 if __name__ == "__main__":
     print "Started main loop..."
-    subprocess.call(["python", "src/data_filling.py"])
+    subprocess.call(["python", "src/process_data.py"])
     print "End main loop."
     pass

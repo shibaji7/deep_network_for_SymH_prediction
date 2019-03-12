@@ -86,17 +86,17 @@ def interpolate_sw_params(years=[], values="Bx"):
                         "E":999.99, "BETA":999.99, "MACH_A":999.9}
     if len(years) == 0: years = range(1995,2019)
     hdf5_base = BASE_LOCATION + "omni/hdf5/%d*.h5"
-    hdf5_yearly_intp_base = BASE_LOCATION + "omni/hdf5/intp/%d_%s.h5"
+    hdf5_yearly_intp_base = BASE_LOCATION + "omni/hdf5/intp/0.%s.%d.h5"
     Kp = to_binned_downsampled_Kp()
     for year in years:
-        fname = hdf5_yearly_intp_base%(year,values)
+        fname = hdf5_yearly_intp_base%(values,year)
         if not os.path.exists(fname):
             print "Processing SW parameter '%s' for year : %d"%(values, year)
             kp = Kp[(Kp.DATE >= dt.datetime(year,1,1)) & (Kp.DATE < dt.datetime(year+1,1,1))].reset_index()
             flist = glob.glob(hdf5_base%year)
             O = pd.DataFrame()
-            for fname in flist:
-                _o = pd.read_hdf(fname, mode="r", key="df", parse_dates=True)
+            for f_name in flist:
+                _o = pd.read_hdf(f_name, mode="r", key="df", parse_dates=True)
                 O = pd.concat([O, _o])
                 pass
             O = O.sort_values("DATE")
@@ -114,14 +114,14 @@ def interpolate_sw_params(years=[], values="Bx"):
     
             ## Interpolate NaN values
             jO = dd.from_pandas(jO, npartitions=100)
-            r_values = jO.apply(intp, axis=1, args=(_gr,)).compute(scheduler="threads")
+            r_values = jO.apply(intp, axis=1, args=(_gr,)).compute(scheduler="processes")
             cnv = O[values].isna().sum()
             print "Converted NaNs - ",cnv
             O[values] = np.array(r_values).tolist()
-            fname = hdf5_yearly_intp_base%(year,values)
             print "Save -to- %s"%fname
             O.to_hdf(fname, mode="w", key="df") 
             pass
+        else: print "File created - ",fname
         pass
     return
 
@@ -142,6 +142,7 @@ def interpolate_sw_params_based_F107_Kp(years=[], values="Bx"):
         return v
 
     def join(kp,f107,o,values):
+        print len(kp), len(f107), len(o)
         _o = pd.DataFrame()
         _o["DATE"] = o.DATE.tolist()
         _o["Kp"] = kp.Kp.tolist()
@@ -154,19 +155,19 @@ def interpolate_sw_params_based_F107_Kp(years=[], values="Bx"):
                         "E":999.99, "BETA":999.99, "MACH_A":999.9}
     if len(years) == 0: years = range(1995,2019)
     hdf5_base = BASE_LOCATION + "omni/hdf5/%d*.h5"
-    hdf5_yearly_intp_base = BASE_LOCATION + "omni/hdf5/intp/%d_%s_solcy_kp.h5"
+    hdf5_yearly_intp_base = BASE_LOCATION + "omni/hdf5/intp/1.%s.%d.h5"
     Kp = to_binned_downsampled_Kp()
     F107 = to_binned_downsampled_F107()
     for year in years:
-        fname = hdf5_yearly_intp_base%(year,values)
+        fname = hdf5_yearly_intp_base%(values,year)
         if not os.path.exists(fname):
             print "Processing SW parameter '%s' for year : %d"%(values, year)
             kp = Kp[(Kp.DATE >= dt.datetime(year,1,1)) & (Kp.DATE < dt.datetime(year+1,1,1))].reset_index()
             f107 = F107[(F107.DATE >= dt.datetime(year,1,1)) & (F107.DATE < dt.datetime(year+1,1,1))].reset_index()
             flist = glob.glob(hdf5_base%year)
             O = pd.DataFrame()
-            for fname in flist:
-                _o = pd.read_hdf(fname, mode="r", key="df", parse_dates=True)
+            for f_name in flist:
+                _o = pd.read_hdf(f_name, mode="r", key="df", parse_dates=True)
                 O = pd.concat([O, _o])
                 pass
             O = O.sort_values("DATE")
@@ -187,10 +188,10 @@ def interpolate_sw_params_based_F107_Kp(years=[], values="Bx"):
             cnv = O[values].isna().sum()
             print "Converted NaNs - ",cnv
             O[values] = np.array(r_values).tolist()
-            fname = hdf5_yearly_intp_base%(year,values)
             print "Save -to- %s"%fname
             O.to_hdf(fname, mode="w", key="df") 
             pass
+        else: print "File created - ",fname
         pass
     return
 

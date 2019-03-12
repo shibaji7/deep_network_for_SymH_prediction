@@ -127,5 +127,8 @@ def raw_f107_to_hdf5():
     return
 
 if __name__ == "__main__":
+    raw_Kp_to_hdf5()
     raw_f107_to_hdf5()
+    raw_symh_to_hdf5()
+    raw_omni_to_hdf5()
     pass
