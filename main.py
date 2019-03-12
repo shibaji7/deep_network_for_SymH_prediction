@@ -16,6 +16,7 @@ import subprocess
 
 if __name__ == "__main__":
     print "Started main loop..."
-    subprocess.call(["python", "src/process_data.py"])
+    subprocess.call(["rm", "jobsub.sh.*"])
+    subprocess.call(["python", "src/data_filling.py"])
     print "End main loop."
     pass

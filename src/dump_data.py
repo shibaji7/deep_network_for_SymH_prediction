@@ -81,4 +81,6 @@ def download_F107_dataset():
 if __name__ == "__main__":
     download_F107_dataset()
     download_Kp_dataset()
+    download_symH_dataset()
+    download_omni_dataset()    
     pass
