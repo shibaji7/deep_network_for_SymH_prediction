@@ -71,6 +71,14 @@ def ini():
     try:
         os.mkdir( BASE_LOCATION + "results/" )
     except: print "System exception. Check folder: %s"%(BASE_LOCATION + "results/")
+
+    try:
+        os.mkdir( BASE_LOCATION + "models/" )
+    except: print "System exception. Check folder: %s"%(BASE_LOCATION + "models/")
+
+    try:
+        os.mkdir( BASE_LOCATION + "dataset/" )
+    except: print "System exception. Check folder: %s"%(BASE_LOCATION + "dataset/")
     return
 
 

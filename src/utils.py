@@ -101,6 +101,53 @@ def to_resample(minutes=5, case=1, years=[]):
         pass
     return
 
+############################################################################################################
+## This method is used to convert Kp to linear 3h resolution data
+############################################################################################################
+def to_linear_Kp(delay_unit=0):
+    Kp = pd.read_hdf(BASE_LOCATION + "geomag/Kp/hdf5/Kp.h5", mode="r", key="df", parse_dates=True)
+    _sKp = Kp.Kp.tolist()
+    _levels = ["0","0+","1-","1","1+","2-","2","2+","3-","3","3+","4-","4","4+",
+            "5-","5","5+","6-","6","6+","7-","7","7+","8-","8","8+","9-","9"]
+    _n = 0.33
+    _lin_values = [0,0+_n,1-_n,1,1+_n,2-_n,2,2+_n,3-_n,3,3+_n,4-_n,4,4+_n,
+            5-_n,5,5+_n,6-_n,6,6+_n,7-_n,7,7+_n,8-_n,8,8+_n,9-_n,9]
+    _dict = dict(zip(_levels,_lin_values))
+    _Kp_lin = []
+    for _k in _sKp: _Kp_lin.append(_dict[_k])
+    _Kp_lin = np.array(_Kp_lin)
+    if delay_unit > 0: _Kp_lin = np.roll(_Kp_lin, -1*delay_unit)
+    Kp.Kp = _Kp_lin
+    _storm = np.zeros(len(_Kp_lin))
+    _storm[_Kp_lin > 4.5] = 1
+    Kp["STORM"] = _storm
+    return Kp
+
+############################################################################################################
+def transform_variables(_df):
+    """
+    Transform 13 solar wind variables to 10 solar wind variables
+    """
+    ["Bx", "By_GSE", "Bz_GSE", "By_GSM", "Bz_GSM", "V", "Vx_GSE", "Vy_GSE", "Vz_GSE", "n", "T", "P_DYN", "E", "BETA", "MACH_A"]
+    B_x = np.array(_df["Bx"]).T
+    B_T = np.sqrt(np.array(_df["By_GSE"])**2+np.array(_df["Bz_GSE"])**2).T
+    theta_c = np.arctan(np.array(_df["Bz_GSE"])/np.array(_df["By_GSE"])).T
+    #theta_c[np.isnan(theta_c)] = 0.
+    sinetheta_c2 = np.sin(theta_c/2)
+    V = np.array(_df["V"]).T
+    n = np.array(_df["n"]).T
+    T = np.array(_df["T"]).T
+    P_dyn = np.array(_df["P_DYN"]).T
+    beta = np.array(_df["BETA"]).T
+    M_A = np.array(_df["MACH_A"]).T
+    storm = np.array(_df["STORM"]).T
+    sdates = _df["DATE"]
+    columns = ["Bx","B_T","THETA","SIN_THETA","V","n","T",
+            "P_DYN","BETA","MACH_A","DATE","STORM"]
+    _o = pd.DataFrame(np.array([B_x,B_T,theta_c,sinetheta_c2,V,n,T,P_dyn,beta,M_A,sdates,storm]).T,columns=columns)
+    return _o
+
+
 ##########################################################
 ## Fetch regressor by name
 ##########################################################

@@ -6,3 +6,4 @@ conda list --export > requirements.txt
 while read requirement; do conda install --yes $requirement; done < requirements.txt
 conda install pytables
 conda install -c conda-forge imbalanced-learn
+conda install -c conda-forge keras
