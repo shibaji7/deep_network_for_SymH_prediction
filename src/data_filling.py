@@ -199,10 +199,16 @@ def interpolate_sw_params_based_F107_Kp(years=[], values="Bx"):
 if __name__ == "__main__":
     ## Each type of case is associated with type of binning method used.
     ## Case 0 : Bin using Kp and UT, Case 1 : Bin using F10.7 and Kp
-    case = 1
+    case = -1
     params = ["Bx", "By_GSE", "Bz_GSE", "By_GSM", "Bz_GSM", "V", "Vx_GSE", "Vy_GSE", "Vz_GSE", "n", "T", "P_DYN", "E", "BETA", "MACH_A"]
-    for param in params:
-        if case == 0: interpolate_sw_params(years=[], values=param)
-        elif case == 1: interpolate_sw_params_based_F107_Kp(years=[], values=param)
+    if case == -1:
+        print "Write a filter case for -1."
+        pass
+    else:
+        ## Run interpolation
+        for param in params:
+            if case == 0: interpolate_sw_params(years=[], values=param)
+            elif case == 1: interpolate_sw_params_based_F107_Kp(years=[], values=param)
+            pass
         pass
     pass

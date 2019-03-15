@@ -14,6 +14,9 @@ __status__ = "Research"
 
 import os
 
+N_WORKER = 100
+SCHEDULER = "processes"
+
 PROJECT_NAME = "deep_network_for_SymH_prediction"
 BASE_LOCATION = os.environ["HOME"]  + "/DATA/"
 
@@ -64,6 +67,10 @@ def ini():
     try:
         os.mkdir( BASE_LOCATION + "omni/hdf5/base/" )
     except: print "System exception. Check folder: %s"%(BASE_LOCATION + "omni/hdf5/base/")
+    
+    try:
+        os.mkdir( BASE_LOCATION + "results/" )
+    except: print "System exception. Check folder: %s"%(BASE_LOCATION + "results/")
     return
 
 
